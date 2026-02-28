@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PreventiCare - Clinical Intelligence Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+    :root {
+      --bg-0: #06121a;
+      --bg-1: #0a1f2c;
+      --bg-2: #112c3d;
+      --panel: rgba(255, 255, 255, 0.95);
+      --panel-soft: rgba(244, 250, 255, 0.9);
+      --line: #d4e3ee;
+      --ink: #0f2d3f;
+      --muted: #4e6a7b;
+      --brand: #0a90b8;
+      --brand-2: #00b6a9;
+      --ok: #15925a;
+      --mid: #c97900;
+      --high: #b62626;
+      --shadow: 0 20px 48px rgba(6, 27, 40, 0.28);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Manrope", "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, #1f3f52 0%, transparent 33%),
+        radial-gradient(circle at 100% 20%, #164f61 0%, transparent 28%),
+        linear-gradient(150deg, var(--bg-0) 0%, var(--bg-1) 45%, var(--bg-2) 100%);
+      min-height: 100vh;
+    }
+
+    .wrapper {
+      width: min(1180px, 94vw);
+      margin: 24px auto 38px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .hero-card {
+      padding: 24px;
+      border-radius: calc(var(--radius) + 4px);
+      background: linear-gradient(130deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      color: #f6fcff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -70px;
+      top: -70px;
+      background: radial-gradient(circle, rgba(17, 226, 199, 0.45), rgba(17, 226, 199, 0));
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 800;
+      background: rgba(199, 239, 255, .16);
+      border: 1px solid rgba(220, 245, 255, .35);
+      margin-bottom: 10px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.5rem, 2vw, 2.2rem);
+      line-height: 1.18;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #dbf3ff;
+      line-height: 1.6;
+      max-width: 62ch;
+    }
+
+    .stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .mini-panel {
+      background: linear-gradient(170deg, rgba(255,255,255,0.17), rgba(255,255,255,0.08));
+      border: 1px solid rgba(228, 246, 255, .34);
+      border-radius: 14px;
+      padding: 12px;
+      color: #e7f9ff;
+    }
+
+    .mini-title {
+      font-size: .78rem;
+      opacity: .85;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 4px;
+    }
+
+    .mini-value {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid #dbe7f0;
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 14px;
+      box-shadow: 0 16px 34px rgba(8, 25, 37, .18);
+      animation: slideUp .45s ease both;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    h2, h3 { margin: 0; color: #103349; }
+
+    .muted {
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .error {
+      color: var(--high);
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
+
+    .q-shell {
+      display: grid;
+      gap: 12px;
+    }
+
+    .q-steps {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+    }
+
+    .q-step {
+      border: 1px solid #bdd6e5;
+      background: linear-gradient(180deg, #f8fcff, #f1f9ff);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .82rem;
+      color: #29536a;
+      font-weight: 700;
+      transition: border-color .25s ease, background .25s ease, transform .2s ease;
+    }
+
+    .q-step.is-active {
+      border-color: #4aa7ce;
+      background: linear-gradient(180deg, #ebf8ff, #e2f5ff);
+      transform: translateY(-1px);
+    }
+
+    .q-step.is-done {
+      border-color: #6ac6bb;
+      background: linear-gradient(180deg, #e9fbf8, #e3f8f4);
+    }
+
+    .q-index {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(120deg, #1987b5, #1cb9aa);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .q-group {
+      border: 1px solid rgba(189, 218, 234, 0.7);
+      border-radius: 13px;
+      padding: 12px;
+      background: linear-gradient(170deg, rgba(255,255,255,0.72), rgba(233,247,255,0.45));
+      backdrop-filter: blur(12px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+
+    .q-group.is-hidden {
+      display: none;
+    }
+
+    .q-group.slide-left {
+      animation: slideLeft .35s ease both;
+    }
+
+    .q-group.slide-right {
+      animation: slideRight .35s ease both;
+    }
+
+    @keyframes slideLeft {
+      from { transform: translateX(24px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideRight {
+      from { transform: translateX(-24px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .q-group h3 {
+      font-size: .95rem;
+      margin-bottom: 2px;
+    }
+
+    .q-note {
+      margin: 0 0 10px;
+      font-size: .84rem;
+      color: #6a8798;
+    }
+
+    .q-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    }
+
+    .q-progress {
+      height: 8px;
+      border-radius: 999px;
+      border: 1px solid #cfe0eb;
+      background: #eaf3f8;
+      overflow: hidden;
+    }
+
+    .q-progress-bar {
+      height: 100%;
+      width: 25%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #178ab8, #21b7ae);
+      transition: width .35s ease;
+    }
+
+    .q-field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .q-field-wide {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: .84rem;
+      font-weight: 700;
+      letter-spacing: .01em;
+      color: #2a4e62;
+    }
+
+    input, select {
+      border: 1px solid #c6d8e5;
+      border-radius: 10px;
+      padding: 11px 10px;
+      font-size: .93rem;
+      color: #17384b;
+      background: #fff;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #57aad0;
+      box-shadow: 0 0 0 3px rgba(88, 170, 208, .18);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .wizard-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .wizard-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ghost {
+      background: #416173;
+    }
+
+    .wizard-layout {
+      display: grid;
+      grid-template-columns: 1.45fr .95fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .wizard-main {
+      display: grid;
+      gap: 12px;
+    }
+
+    .wizard-aside {
+      border: 1px solid rgba(188, 218, 235, 0.75);
+      border-radius: 13px;
+      padding: 12px;
+      background: linear-gradient(170deg, rgba(255,255,255,0.78), rgba(232,247,255,0.55));
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 16px;
+    }
+
+    .summary-grid {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 8px;
+    }
+
+    .summary-item {
+      border: 1px solid #cfe1ec;
+      border-radius: 10px;
+      padding: 8px;
+      background: #f7fcff;
+    }
+
+    .summary-item b {
+      display: block;
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #537387;
+    }
+
+    .summary-item span {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: .89rem;
+      color: #183f54;
+    }
+
+    .summary-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .summary-tag {
+      border: 1px solid #c5dceb;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: #edf7fd;
+      font-size: .76rem;
+      color: #2d566c;
+      font-weight: 700;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 16px;
+      font-family: "Manrope", sans-serif;
+      font-weight: 800;
+      letter-spacing: .01em;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(120deg, var(--brand), var(--brand-2));
+      transition: transform .15s ease, filter .15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); filter: saturate(1.1); }
+
+    .secondary { background: #204459; }
+
+    .kpi-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      margin-top: 12px;
+    }
+
+    .kpi {
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      padding: 12px;
+      background: linear-gradient(180deg, #ffffff, #f7fbfe);
+    }
+
+    .kpi-name {
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #5a7788;
+    }
+
+    .kpi-value {
+      margin-top: 4px;
+      font-weight: 800;
+      color: #11374d;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: #fff;
+      font-size: .76rem;
+      font-weight: 800;
+      margin-left: 8px;
+    }
+
+    .pill-low { background: var(--ok); }
+    .pill-mid { background: var(--mid); }
+    .pill-high { background: var(--high); }
+
+    .bars {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .bar-wrap {
+      background: #e8f1f6;
+      border-radius: 999px;
+      height: 11px;
+      overflow: hidden;
+      border: 1px solid #d2e2ec;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2a9fd6, #23c5b4);
+      transition: width .9s ease;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .soft {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: var(--panel-soft);
+    }
+
+    ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+      line-height: 1.5;
+      color: #3e6173;
+    }
+
+    .alert {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #f3cccc;
+      background: #fff4f4;
+      color: #8f1e1e;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .history {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: .84rem;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid #c5d8e5;
+      background: #f4fafe;
+      font-size: .8rem;
+      color: #2b5369;
+      font-weight: 600;
+    }
+
+    @media (max-width: 930px) {
+      .hero, .split { grid-template-columns: 1fr; }
+      .q-steps { grid-template-columns: repeat(2, minmax(140px, 1fr)); }
+      .wizard-layout { grid-template-columns: 1fr; }
+      .wizard-aside { position: static; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .hero { display: none; }
+      .card { box-shadow: none; border-color: #d9e5ed; }
+      form, .toolbar { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrapper">
+    <section class="hero">
+      <article class="hero-card">
+        <span class="label">Clinical Web App - Student Project</span>
+        <h1>PreventiCare Dashboard</h1>
+        <p>
+          Mes stages à la Clinique de la Côte d’Opale ont confirmé ma vocation médicale.
+          Ce projet transforme cette expérience de terrain en outil numérique de prévention:
+          tri clinique, pédagogie patient et restitution exploitable.
+        </p>
+      </article>
+      <aside class="hero-card stack">
+        <div class="mini-panel">
+          <div class="mini-title">Stage 3ème</div>
+          <div class="mini-value">Dr Doleh Wissam · gastroscopie/coloscopie</div>
+        </div>
+        <div class="mini-panel">
+          <div class="mini-title">Août 2025</div>
+          <div class="mini-value">Patients, maladie de Crohn, endoscopies en direct</div>
+        </div>
+        <div class="mini-panel">
+          <div class="mini-title">Février 2026</div>
+          <div class="mini-value">Dr Fadi Katherin · cancer du côlon, bio + diagnostic précoce</div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>Questionnaire Clinique</h2>
+        <span class="muted">Formulaire complet pour évaluation multi-risque</span>
+      </div>
+
+      {% if erreur %}
+        <p class="error">{{ erreur }}</p>
+      {% endif %}
+
+      <form method="post" action="/analyser">
+        <div class="wizard-layout">
+          <div class="wizard-main">
+            <div class="q-shell">
+              <div class="q-steps">
+                <div class="q-step is-active" data-step-indicator="0"><span class="q-index">1</span>Identité</div>
+                <div class="q-step" data-step-indicator="1"><span class="q-index">2</span>Mesures</div>
+                <div class="q-step" data-step-indicator="2"><span class="q-index">3</span>Cardiovasculaire</div>
+                <div class="q-step" data-step-indicator="3"><span class="q-index">4</span>Colorectal</div>
+              </div>
+              <div class="q-progress"><div class="q-progress-bar" id="wizard-progress"></div></div>
+              <p class="q-note" id="wizard-status">Étape 1/4 · Profil patient</p>
+
+              <section class="q-group" data-step="0">
+                <h3>Profil patient</h3>
+                <p class="q-note">Informations de base pour contextualiser le scoring.</p>
+                <div class="q-grid">
+                  <div class="q-field q-field-wide"><label for="nom_patient">Nom patient (optionnel)</label><input id="nom_patient" name="nom_patient" type="text" value="{{ donnees.get('nom_patient', '') }}" placeholder="Ex: M. Martin" /></div>
+                  <div class="q-field"><label for="age">Âge</label><input id="age" name="age" type="number" min="1" required value="{{ donnees.get('age', '') }}" /></div>
+                  <div class="q-field"><label for="sexe">Sexe</label><select id="sexe" name="sexe" required><option value="">Choisir...</option><option value="homme" {% if donnees.get('sexe') == 'homme' %}selected{% endif %}>Homme</option><option value="femme" {% if donnees.get('sexe') == 'femme' %}selected{% endif %}>Femme</option></select></div>
+                </div>
+              </section>
+
+              <section class="q-group is-hidden" data-step="1">
+                <h3>Mesures anthropométriques</h3>
+                <p class="q-note">Ces valeurs alimentent l'IMC et le ratio WHtR.</p>
+                <div class="q-grid">
+                  <div class="q-field"><label for="poids">Poids (kg)</label><input id="poids" name="poids" type="number" min="1" step="0.1" required value="{{ donnees.get('poids', '') }}" /></div>
+                  <div class="q-field"><label for="taille">Taille (cm)</label><input id="taille" name="taille" type="number" min="1" step="0.1" required value="{{ donnees.get('taille', '') }}" /></div>
+                  <div class="q-field"><label for="tour_taille">Tour de taille (cm)</label><input id="tour_taille" name="tour_taille" type="number" min="1" step="0.1" required value="{{ donnees.get('tour_taille', '') }}" /></div>
+                </div>
+              </section>
+
+              <section class="q-group is-hidden" data-step="2">
+                <h3>Bloc cardiovasculaire</h3>
+                <p class="q-note">Facteurs de risque cardio-métaboliques et symptômes d'alerte.</p>
+                <div class="q-grid">
+                  <div class="q-field"><label for="tabac">Tabac</label><select id="tabac" name="tabac" required><option value="non" {% if donnees.get('tabac') == 'non' %}selected{% endif %}>Non</option><option value="oui" {% if donnees.get('tabac') == 'oui' %}selected{% endif %}>Oui</option></select></div>
+                  <div class="q-field"><label for="hypertension">Hypertension</label><select id="hypertension" name="hypertension" required><option value="non" {% if donnees.get('hypertension') == 'non' %}selected{% endif %}>Non</option><option value="oui" {% if donnees.get('hypertension') == 'oui' %}selected{% endif %}>Oui</option></select></div>
+                  <div class="q-field"><label for="diabete">Diabète</label><select id="diabete" name="diabete" required><option value="non" {% if donnees.get('diabete') == 'non' %}selected{% endif %}>Non</option><option value="oui" {% if donnees.get('diabete') == 'oui' %}selected{% endif %}>Oui</option></select></div>
+                  <div class="q-field"><label for="cholesterol">Cholestérol élevé</label><select id="cholesterol" name="cholesterol" required><option value="non" {% if donnees.get('cholesterol') == 'non' %}selected{% endif %}>Non</option><option value="oui" {% if donnees.get('cholesterol') == 'oui' %}selected{% endif %}>Oui</option></select></div>
+                  <div class="q-field"><label for="antecedents_cardio">ATCD cardio familiaux</label><select id="antecedents_cardio" name="antecedents_cardio" required><option value="non" {% if donnees.get('antecedents_cardio') == 'non' %}selected{% endif %}>Non</option><option value="oui" {% if donnees.get('antecedents_cardio') == 'oui' %}selected{% endif %}>Oui</option></select></div>
+                  <div class="q-field"><label for="activite_physique">Activité physique régulière</label><select id="activite_physique" name="activite_physique" required><option value="oui" {% if donnees.get('activite_physique') == 'oui' %}selected{% endif %}>Oui</option><option value="non" {% if donnees.get('activite_physique') == 'non' %}selected{% endif %}>Non</option></select></div>
+                  <div class="q-field"><label for="alcool">Alcool</label><select id="alcool" name="alcool" required><option value="faible" {% if donnees.get('alcool') == 'faible' %}selected{% endif %}>Faible</option><option value="modere" {% if donnees.get('alcool') == 'modere' %}selected{% endif %}>Modéré</option><option value="excessif" {% if donnees.get('alcool') == 'excessif' %}selected{% endif %}>Excessif</option></select></div>
+                  <div class="q-field"><label for="symptomes_cardio">Symptômes cardio d'alerte</label><select id="symptomes_cardio" name="symptomes_cardio" required><option value="non" {% if donnees.get('symptomes_cardio') == 'non' %}selected{% endif %}>Non</option><option value="oui" {% if donnees.get('symptomes_cardio') == 'oui' %}selected{% endif %}>Oui</option></select></div>
+                </div>
+              </section>
+
+              <section class="q-group is-hidden" data-step="3">
+                <h3>Bloc colorectal</h3>
+                <p class="q-note">Questionnaire orienté dépistage et prévention du cancer du côlon.</p>
+                <div class="q-grid">
+                  <div class="q-field"><label for="antecedents_colon">ATCD familiaux cancer colorectal</label><select id="antecedents_colon" name="antecedents_colon" required><option value="non" {% if donnees.get('antecedents_colon') == 'non' %}selected{% endif %}>Non</option><option value="oui" {% if donnees.get('antecedents_colon') == 'oui' %}selected{% endif %}>Oui</option></select></div>
+                  <div class="q-field"><label for="symptomes_digestifs">Troubles digestifs persistants</label><select id="symptomes_digestifs" name="symptomes_digestifs" required><option value="non" {% if donnees.get('symptomes_digestifs') == 'non' %}selected{% endif %}>Non</option><option value="oui" {% if donnees.get('symptomes_digestifs') == 'oui' %}selected{% endif %}>Oui</option></select></div>
+                  <div class="q-field"><label for="sang_selles">Sang dans les selles</label><select id="sang_selles" name="sang_selles" required><option value="non" {% if donnees.get('sang_selles') == 'non' %}selected{% endif %}>Non</option><option value="oui" {% if donnees.get('sang_selles') == 'oui' %}selected{% endif %}>Oui</option></select></div>
+                  <div class="q-field"><label for="depistage_colon">Dernier dépistage colorectal</label><select id="depistage_colon" name="depistage_colon" required><option value="moins_2_ans" {% if donnees.get('depistage_colon') == 'moins_2_ans' %}selected{% endif %}>< 2 ans</option><option value="plus_2_ans" {% if donnees.get('depistage_colon') == 'plus_2_ans' %}selected{% endif %}>> 2 ans</option><option value="jamais" {% if donnees.get('depistage_colon') == 'jamais' %}selected{% endif %}>Jamais</option></select></div>
+                  <div class="q-field"><label for="fibres">Alimentation riche en fibres</label><select id="fibres" name="fibres" required><option value="oui" {% if donnees.get('fibres') == 'oui' %}selected{% endif %}>Oui</option><option value="non" {% if donnees.get('fibres') == 'non' %}selected{% endif %}>Non</option></select></div>
+                  <div class="q-field"><label for="viandes_transformees">Charcuterie/viandes transformées fréquentes</label><select id="viandes_transformees" name="viandes_transformees" required><option value="non" {% if donnees.get('viandes_transformees') == 'non' %}selected{% endif %}>Non</option><option value="oui" {% if donnees.get('viandes_transformees') == 'oui' %}selected{% endif %}>Oui</option></select></div>
+                </div>
+              </section>
+            </div>
+
+            <div class="wizard-nav">
+              <span class="muted" id="draft-indicator">Brouillon auto sauvegardé localement.</span>
+              <div class="wizard-actions">
+                <button type="button" class="secondary" id="btn-demo">Cas démo</button>
+                <button type="button" class="ghost" id="btn-prev">Précédent</button>
+                <button type="button" id="btn-next">Suivant</button>
+                <button type="submit" id="btn-submit" style="display:none;">Lancer l'analyse clinique</button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="wizard-aside">
+            <h3>Résumé instantané</h3>
+            <p class="q-note">Aperçu dynamique pendant la saisie.</p>
+            <div class="summary-grid">
+              <div class="summary-item"><b>Patient</b><span id="live-patient">-</span></div>
+              <div class="summary-item"><b>Âge</b><span id="live-age">-</span></div>
+              <div class="summary-item"><b>Sexe</b><span id="live-sexe">-</span></div>
+              <div class="summary-item"><b>IMC estimé</b><span id="live-imc">-</span></div>
+              <div class="summary-item"><b>WHtR estimé</b><span id="live-whtr">-</span></div>
+              <div class="summary-item"><b>Alerte</b><span id="live-alert">Aucune</span></div>
+            </div>
+            <div class="summary-tags" id="live-tags"></div>
+          </aside>
+        </div>
+      </form>
+    </section>
+
+    <script>
+      (() => {
+        const form = document.querySelector('form[action="/analyser"]');
+        if (!form) return;
+
+        const groups = Array.from(form.querySelectorAll(".q-group"));
+        const steps = Array.from(form.querySelectorAll("[data-step-indicator]"));
+        const progress = document.getElementById("wizard-progress");
+        const status = document.getElementById("wizard-status");
+        const prevBtn = document.getElementById("btn-prev");
+        const nextBtn = document.getElementById("btn-next");
+        const demoBtn = document.getElementById("btn-demo");
+        const submitBtn = document.getElementById("btn-submit");
+        const draftIndicator = document.getElementById("draft-indicator");
+        const livePatient = document.getElementById("live-patient");
+        const liveAge = document.getElementById("live-age");
+        const liveSexe = document.getElementById("live-sexe");
+        const liveImc = document.getElementById("live-imc");
+        const liveWhtr = document.getElementById("live-whtr");
+        const liveAlert = document.getElementById("live-alert");
+        const liveTags = document.getElementById("live-tags");
+        const draftKey = "preventicare_form_draft_v1";
+        const stepLabels = ["Profil patient", "Mesures", "Cardiovasculaire", "Colorectal"];
+
+        let currentStep = 0;
+
+        function getStepFields(stepIndex) {
+          return Array.from(groups[stepIndex].querySelectorAll("input, select, textarea"));
+        }
+
+        function applyStepState(direction = "left") {
+          groups.forEach((group, idx) => {
+            const isCurrent = idx === currentStep;
+            group.classList.toggle("is-hidden", !isCurrent);
+            steps[idx].classList.toggle("is-active", isCurrent);
+            steps[idx].classList.toggle("is-done", idx < currentStep);
+            group.classList.remove("slide-left", "slide-right");
+            if (isCurrent) {
+              group.classList.add(direction === "right" ? "slide-right" : "slide-left");
+            }
+            getStepFields(idx).forEach((field) => {
+              if (field.name === "nom_patient") return;
+              field.disabled = !isCurrent;
+            });
+          });
+
+          const pct = ((currentStep + 1) / groups.length) * 100;
+          progress.style.width = `${pct}%`;
+          status.textContent = `Étape ${currentStep + 1}/${groups.length} · ${stepLabels[currentStep]}`;
+
+          prevBtn.disabled = currentStep === 0;
+          nextBtn.style.display = currentStep === groups.length - 1 ? "none" : "inline-block";
+          submitBtn.style.display = currentStep === groups.length - 1 ? "inline-block" : "none";
+        }
+
+        function updateLiveSummary() {
+          const nom = form.elements.namedItem("nom_patient")?.value?.trim() || "Patient";
+          const age = form.elements.namedItem("age")?.value || "-";
+          const sexeRaw = form.elements.namedItem("sexe")?.value || "-";
+          const sexe = sexeRaw === "homme" ? "Homme" : (sexeRaw === "femme" ? "Femme" : "-");
+          const poids = Number((form.elements.namedItem("poids")?.value || "").replace(",", "."));
+          const taille = Number((form.elements.namedItem("taille")?.value || "").replace(",", "."));
+          const tour = Number((form.elements.namedItem("tour_taille")?.value || "").replace(",", "."));
+          const symptCardio = form.elements.namedItem("symptomes_cardio")?.value === "oui";
+          const symptColon = form.elements.namedItem("sang_selles")?.value === "oui";
+
+          let imc = "-";
+          let whtr = "-";
+          if (poids > 0 && taille > 0) {
+            imc = (poids / ((taille / 100) ** 2)).toFixed(1);
+          }
+          if (tour > 0 && taille > 0) {
+            whtr = (tour / taille).toFixed(2);
+          }
+
+          livePatient.textContent = nom;
+          liveAge.textContent = age;
+          liveSexe.textContent = sexe;
+          liveImc.textContent = imc;
+          liveWhtr.textContent = whtr;
+          liveAlert.textContent = symptCardio || symptColon ? "Attention" : "Aucune";
+          liveAlert.style.color = symptCardio || symptColon ? "#b62626" : "#1f6a48";
+
+          const tags = [];
+          if (form.elements.namedItem("tabac")?.value === "oui") tags.push("Tabac");
+          if (form.elements.namedItem("hypertension")?.value === "oui") tags.push("HTA");
+          if (form.elements.namedItem("diabete")?.value === "oui") tags.push("Diabète");
+          if (form.elements.namedItem("cholesterol")?.value === "oui") tags.push("Cholestérol");
+          if (form.elements.namedItem("antecedents_colon")?.value === "oui") tags.push("ATCD colon");
+          if (form.elements.namedItem("symptomes_digestifs")?.value === "oui") tags.push("Troubles digestifs");
+
+          liveTags.innerHTML = "";
+          if (!tags.length) {
+            const chip = document.createElement("span");
+            chip.className = "summary-tag";
+            chip.textContent = "Facteurs mineurs";
+            liveTags.appendChild(chip);
+          } else {
+            tags.forEach((tag) => {
+              const chip = document.createElement("span");
+              chip.className = "summary-tag";
+              chip.textContent = tag;
+              liveTags.appendChild(chip);
+            });
+          }
+        }
+
+        function validateCurrentStep() {
+          const fields = getStepFields(currentStep).filter((el) => !el.disabled);
+          for (const field of fields) {
+            if (!field.checkValidity()) {
+              field.reportValidity();
+              return false;
+            }
+          }
+          return true;
+        }
+
+        function saveDraft() {
+          const data = {};
+          for (const el of form.elements) {
+            if (!el.name) continue;
+            data[el.name] = el.value;
+          }
+          localStorage.setItem(draftKey, JSON.stringify(data));
+          draftIndicator.textContent = "Brouillon enregistré.";
+          window.setTimeout(() => {
+            draftIndicator.textContent = "Brouillon auto sauvegardé localement.";
+          }, 1000);
+        }
+
+        function restoreDraft() {
+          const raw = localStorage.getItem(draftKey);
+          if (!raw) return;
+          try {
+            const data = JSON.parse(raw);
+            Object.entries(data).forEach(([name, value]) => {
+              const el = form.elements.namedItem(name);
+              if (el && "value" in el && !el.value) {
+                el.value = value;
+              }
+            });
+          } catch (_) {
+            // Ignore corrupted local storage values.
+          }
+        }
+
+        nextBtn.addEventListener("click", () => {
+          if (!validateCurrentStep()) return;
+          currentStep = Math.min(groups.length - 1, currentStep + 1);
+          applyStepState("left");
+        });
+
+        prevBtn.addEventListener("click", () => {
+          currentStep = Math.max(0, currentStep - 1);
+          applyStepState("right");
+        });
+
+        form.addEventListener("input", () => {
+          saveDraft();
+          updateLiveSummary();
+        });
+
+        demoBtn.addEventListener("click", () => {
+          const sample = {
+            nom_patient: "Patient Demo",
+            age: "58",
+            sexe: "homme",
+            poids: "88",
+            taille: "176",
+            tour_taille: "101",
+            tabac: "non",
+            hypertension: "oui",
+            diabete: "non",
+            cholesterol: "oui",
+            antecedents_cardio: "oui",
+            activite_physique: "non",
+            alcool: "modere",
+            symptomes_cardio: "non",
+            antecedents_colon: "non",
+            symptomes_digestifs: "oui",
+            sang_selles: "non",
+            depistage_colon: "plus_2_ans",
+            fibres: "non",
+            viandes_transformees: "oui"
+          };
+
+          Object.entries(sample).forEach(([name, value]) => {
+            const field = form.elements.namedItem(name);
+            if (field && "value" in field) field.value = value;
+          });
+          currentStep = 0;
+          applyStepState("right");
+          updateLiveSummary();
+          saveDraft();
+        });
+
+        form.addEventListener("submit", (event) => {
+          groups.forEach((group) => {
+            group.querySelectorAll("input, select, textarea").forEach((field) => {
+              field.disabled = false;
+            });
+          });
+
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            const firstInvalid = form.querySelector(":invalid");
+            const parentStep = firstInvalid?.closest(".q-group");
+            if (parentStep) {
+              currentStep = Number(parentStep.dataset.step || 0);
+              applyStepState("right");
+            }
+            firstInvalid?.reportValidity();
+          } else {
+            localStorage.removeItem(draftKey);
+          }
+        });
+
+        restoreDraft();
+        updateLiveSummary();
+        applyStepState("left");
+      })();
+    </script>
+
+    {% if resultat %}
+      <section class="card">
+        <div class="section-head">
+          <h2>Résultats du Patient</h2>
+          <span class="muted">{{ resultat.nom_patient }} · {{ resultat.date_analyse }}</span>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi"><div class="kpi-name">IMC</div><div class="kpi-value">{{ resultat.imc }} · {{ resultat.categorie_imc }}</div></div>
+          <div class="kpi"><div class="kpi-name">WHtR</div><div class="kpi-value">{{ resultat.whtr }} · {{ resultat.categorie_whtr }}</div></div>
+          <div class="kpi"><div class="kpi-name">Score Cardio</div><div class="kpi-value">{{ resultat.score_cardio }} points</div></div>
+          <div class="kpi"><div class="kpi-name">Score Colorectal</div><div class="kpi-value">{{ resultat.score_colon }} points</div></div>
+        </div>
+
+        {% set cardio_lvl = resultat.niveau_cardio %}
+        {% set colon_lvl = resultat.niveau_colon %}
+
+        <div class="chip-row">
+          <span class="chip">Risque cardio: {{ cardio_lvl }}</span>
+          <span class="chip">Risque colorectal: {{ colon_lvl }}</span>
+          <span class="chip">Synthèse: {{ resultat.synthese }}</span>
+        </div>
+
+        <div class="bars">
+          <div>
+            <div class="muted">Indice visuel cardio</div>
+            <div class="bar-wrap"><div id="bar-cardio" class="bar"></div></div>
+          </div>
+          <div>
+            <div class="muted">Indice visuel colorectal</div>
+            <div class="bar-wrap"><div id="bar-colon" class="bar"></div></div>
+          </div>
+        </div>
+
+        {% if resultat.alertes %}
+          <div style="margin-top: 14px;">
+            <h3>Alertes</h3>
+            {% for alerte in resultat.alertes %}
+              <div class="alert">{{ alerte }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="toolbar">
+          <form method="post" action="/export/pdf" target="_blank">
+            {% for key, val in donnees.items() %}<input type="hidden" name="{{ key }}" value="{{ val }}" />{% endfor %}
+            <button type="submit">Exporter PDF patient</button>
+          </form>
+          <form method="post" action="/rapport/imprimable" target="_blank">
+            {% for key, val in donnees.items() %}<input type="hidden" name="{{ key }}" value="{{ val }}" />{% endfor %}
+            <button class="secondary" type="submit">Ouvrir fiche imprimable</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="card split">
+        <article class="soft">
+          <h3>Détail Score Cardio</h3>
+          <ul>{% for item in resultat.details_cardio %}<li>{{ item }}</li>{% endfor %}</ul>
+        </article>
+        <article class="soft">
+          <h3>Détail Score Colorectal</h3>
+          <ul>{% for item in resultat.details_colon %}<li>{{ item }}</li>{% endfor %}</ul>
+        </article>
+      </section>
+
+      <section class="card">
+        <h3>Plan d'Actions Personnalisé</h3>
+        <ul>{% for action in resultat.plan_actions %}<li>{{ action }}</li>{% endfor %}</ul>
+      </section>
+
+      <section class="card">
+        <h3>Historique Local (navigateur)</h3>
+        <p class="muted">Montre une logique de suivi: 8 derniers bilans enregistrés côté client.</p>
+        <ul id="history-list" class="history"></ul>
+      </section>
+
+      <script>
+        const cardioScore = {{ resultat.score_cardio|tojson }};
+        const colonScore = {{ resultat.score_colon|tojson }};
+        const cardioPercent = Math.min(100, Math.round((cardioScore / 20) * 100));
+        const colonPercent = Math.min(100, Math.round((colonScore / 16) * 100));
+        document.getElementById("bar-cardio").style.width = `${cardioPercent}%`;
+        document.getElementById("bar-colon").style.width = `${colonPercent}%`;
+
+        const current = {
+          patient: {{ resultat.nom_patient|tojson }},
+          date: {{ resultat.date_analyse|tojson }},
+          imc: {{ resultat.imc|tojson }},
+          cardio: {{ resultat.niveau_cardio|tojson }},
+          colon: {{ resultat.niveau_colon|tojson }}
+        };
+
+        const key = "preventicare_history_v2";
+        const oldItems = JSON.parse(localStorage.getItem(key) || "[]");
+        oldItems.unshift(current);
+
+        const compact = [];
+        const seen = new Set();
+        for (const it of oldItems) {
+          const uid = `${it.patient}|${it.date}|${it.imc}|${it.cardio}|${it.colon}`;
+          if (!seen.has(uid)) {
+            seen.add(uid);
+            compact.push(it);
+          }
+        }
+
+        const last = compact.slice(0, 8);
+        localStorage.setItem(key, JSON.stringify(last));
+
+        const history = document.getElementById("history-list");
+        history.innerHTML = "";
+        last.forEach((it) => {
+          const li = document.createElement("li");
+          li.textContent = `${it.date} | ${it.patient || "Patient"} | IMC ${it.imc} | Cardio ${it.cardio} | Colon ${it.colon}`;
+          history.appendChild(li);
+        });
+      </script>
+    {% endif %}
+
+    <section class="card split">
+      <article class="soft">
+        <h3>Module information - Cancer du côlon</h3>
+        <ul>
+          <li>Dépistage recommandé entre 50 et 74 ans, tous les 2 ans en population générale.</li>
+          <li>Test immunologique positif: indication de coloscopie.</li>
+          <li>Antécédents familiaux: stratégie individualisée plus précoce.</li>
+        </ul>
+      </article>
+      <article class="soft">
+        <h3>Valeur pédagogique du projet</h3>
+        <ul>
+          <li>Architecture Flask + templates dynamiques Jinja.</li>
+          <li>Moteur de scores multi-domaines + explications automatiques.</li>
+          <li>Export PDF, impression, et stockage local d'historique.</li>
+          <li>Présentation orientée usage clinique et démonstration technique.</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

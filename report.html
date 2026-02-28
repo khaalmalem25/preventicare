@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fiche Patient - PreventiCare</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 15mm;
+    }
+
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 11px;
+      color: #1b2f3a;
+      line-height: 1.42;
+      margin: 0;
+    }
+
+    .top {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+    }
+
+    .top td {
+      vertical-align: top;
+    }
+
+    .brand {
+      width: 68px;
+      height: 68px;
+      border: 2px solid #0f4f6a;
+      border-radius: 8px;
+      text-align: center;
+      color: #0f4f6a;
+      font-weight: bold;
+      font-size: 16px;
+      line-height: 64px;
+      background: #f4fbff;
+    }
+
+    .header {
+      padding-left: 10px;
+    }
+
+    .header h1 {
+      margin: 0;
+      color: #0f4f6a;
+      font-size: 21px;
+      line-height: 1.15;
+    }
+
+    .header p {
+      margin: 3px 0 0;
+      color: #426170;
+      font-size: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 5px;
+      border: 1px solid #b7d0de;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 9px;
+      color: #36586a;
+      background: #eef7fc;
+    }
+
+    .panel {
+      border: 1px solid #d5e2ea;
+      border-radius: 7px;
+      margin-bottom: 9px;
+      overflow: hidden;
+    }
+
+    .panel-title {
+      background: #edf6fb;
+      border-bottom: 1px solid #d5e2ea;
+      padding: 6px 8px;
+      font-weight: bold;
+      color: #17475d;
+      font-size: 12px;
+    }
+
+    .panel-body {
+      padding: 8px;
+    }
+
+    .meta p {
+      margin: 2px 0;
+    }
+
+    .two-col {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .two-col td {
+      width: 50%;
+      vertical-align: top;
+      padding-right: 5px;
+    }
+
+    .two-col td:last-child {
+      padding-right: 0;
+      padding-left: 5px;
+    }
+
+    .inner {
+      border: 1px solid #d9e6ee;
+      border-radius: 6px;
+      padding: 7px;
+      background: #fbfdff;
+      min-height: 115px;
+    }
+
+    .inner h4 {
+      margin: 0 0 6px;
+      color: #1d4f66;
+      font-size: 11px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 15px;
+    }
+
+    li {
+      margin-bottom: 2px;
+    }
+
+    .alert {
+      border: 1px solid #f0c7c7;
+      background: #fff5f5;
+      color: #8d2323;
+      border-radius: 6px;
+      padding: 7px;
+      margin-bottom: 6px;
+    }
+
+    .kpis {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .kpis td {
+      width: 25%;
+      border: 1px solid #d5e2ea;
+      padding: 6px;
+      background: #fbfdff;
+      vertical-align: top;
+    }
+
+    .k-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      color: #5a7686;
+      margin-bottom: 2px;
+    }
+
+    .k-value {
+      font-weight: bold;
+      color: #183f54;
+      font-size: 11px;
+    }
+
+    .callout {
+      border: 1px dashed #b7ccd9;
+      border-radius: 6px;
+      padding: 7px;
+      background: #f8fcff;
+      margin-top: 7px;
+      font-size: 10px;
+      color: #395a6a;
+    }
+
+    .sign-grid {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      margin-top: 8px;
+    }
+
+    .sign-grid td {
+      width: 50%;
+      vertical-align: top;
+      padding-right: 5px;
+    }
+
+    .sign-grid td:last-child {
+      padding-right: 0;
+      padding-left: 5px;
+    }
+
+    .sign-box {
+      border: 1px solid #d6e3eb;
+      border-radius: 6px;
+      padding: 7px;
+      height: 70px;
+      background: #fff;
+    }
+
+    .footer {
+      margin-top: 10px;
+      border-top: 1px solid #d7e4ec;
+      padding-top: 7px;
+      color: #4a6777;
+      font-size: 9px;
+    }
+
+    .print-btn {
+      margin-top: 10px;
+      border: 0;
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #fff;
+      background: #1f5b78;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    @media print {
+      .print-btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <table class="top" cellspacing="0" cellpadding="0">
+    <tr>
+      <td style="width:72px;"><div class="brand">PC</div></td>
+      <td class="header">
+        <h1>PreventiCare - Fiche Patient</h1>
+        <p>Évaluation cardio-métabolique et risque colorectal</p>
+        <span class="badge">Version soutenance / jury</span>
+      </td>
+    </tr>
+  </table>
+
+  <div class="panel meta">
+    <div class="panel-title">Identité et contexte</div>
+    <div class="panel-body">
+      <p><strong>Patient:</strong> {{ resultat.nom_patient }} | <strong>Âge:</strong> {{ resultat.age }} | <strong>Sexe:</strong> {{ resultat.sexe }}</p>
+      <p><strong>Date d'analyse:</strong> {{ resultat.date_analyse }}</p>
+      <div class="callout">
+        <strong>Objectif du projet:</strong> proposer un outil de sensibilisation structuré, capable de synthétiser des facteurs de risque pour soutenir l'éducation du patient.
+        <br />
+        <strong>Limites:</strong> ce document ne constitue ni diagnostic médical ni prescription; il oriente vers une évaluation clinique lorsque nécessaire.
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Indicateurs clés</div>
+    <div class="panel-body">
+      <table class="kpis" cellspacing="0" cellpadding="0">
+        <tr>
+          <td><div class="k-label">IMC</div><div class="k-value">{{ resultat.imc }} ({{ resultat.categorie_imc }})</div></td>
+          <td><div class="k-label">WHtR</div><div class="k-value">{{ resultat.whtr }} ({{ resultat.categorie_whtr }})</div></td>
+          <td><div class="k-label">Risque cardio</div><div class="k-value">{{ resultat.niveau_cardio }} ({{ resultat.score_cardio }} pts)</div></td>
+          <td><div class="k-label">Risque colorectal</div><div class="k-value">{{ resultat.niveau_colon }} ({{ resultat.score_colon }} pts)</div></td>
+        </tr>
+      </table>
+      <div style="margin-top:8px;"><strong>Synthèse:</strong> {{ resultat.synthese }}</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Alertes cliniques</div>
+    <div class="panel-body">
+      {% if resultat.alertes %}
+        {% for alerte in resultat.alertes %}
+          <div class="alert">{{ alerte }}</div>
+        {% endfor %}
+      {% else %}
+        <p>Aucune alerte immédiate signalée.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <table class="two-col" cellspacing="0" cellpadding="0">
+    <tr>
+      <td>
+        <div class="inner">
+          <h4>Détail score cardiovasculaire</h4>
+          <ul>
+            {% for item in resultat.details_cardio %}
+              <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </td>
+      <td>
+        <div class="inner">
+          <h4>Détail module colorectal</h4>
+          <ul>
+            {% for item in resultat.details_colon %}
+              <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <div class="panel" style="margin-top:9px;">
+    <div class="panel-title">Plan d'actions proposé</div>
+    <div class="panel-body">
+      <ul>
+        {% for action in resultat.plan_actions %}
+          <li>{{ action }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Commentaires et validation pédagogique</div>
+    <div class="panel-body">
+      <table class="sign-grid" cellspacing="0" cellpadding="0">
+        <tr>
+          <td>
+            <div class="sign-box">
+              <strong>Commentaire enseignant / tuteur:</strong>
+            </div>
+          </td>
+          <td>
+            <div class="sign-box">
+              <strong>Nom / signature / date:</strong>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  {% if not export_mode %}
+    <button class="print-btn" onclick="window.print()">Imprimer / Enregistrer en PDF</button>
+  {% endif %}
+
+  <div class="footer">
+    Document académique de sensibilisation. Utilisation pédagogique uniquement.
+  </div>
+</body>
+</html>
